@@ -310,7 +310,8 @@ GET('/feed.atom', function(){
     owner:   this.blog.author
   }, {
     'tag': function() {
-      return system.digest.sha1.hex( this.id );
+      if ( this.id )
+	return system.digest.sha1.hex( this.id );
     }
   });
 });
