@@ -1,1 +1,1 @@
-{ "post_install": "/setup", "admin": "/admin" }
+{ "name": "Penman", "post_install": "/setup", "admin": "/admin" }
