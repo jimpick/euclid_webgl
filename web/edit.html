@@ -15,9 +15,15 @@
     <header>New Post</header>
     <form [% IF !post_to %]action="/posts"[% ELSE %]action="[% post_to %]"[% END %] method="post">
       <fieldset>
+	[% IF post.title %]
 	<div class="field">
 	  <input class="clickedit" type="text" id="title" name="title" value="[% post.title %]">
 	</div>
+	[% ELSE %]
+	<div class="field">
+	  <input class="clickedit untitled" type="text" id="title" name="title" value="Untitled">
+	</div>
+	[% END %]
 	<div class="field">
 	  <textarea id="b" name="body">[% post.body %]</textarea>
 	</div>

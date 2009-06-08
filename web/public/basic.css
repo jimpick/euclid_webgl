@@ -89,3 +89,7 @@ input.button {
   margin-top: 1em;
   width: 5em;
 }
+
+input.untitled {
+  color: #bbb;
+}
