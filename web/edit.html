@@ -12,7 +12,7 @@
     <script type="application/javascript" src="/js/clickedit.js"></script>
   </head>
   <body>    
-    <header>New Post</header>
+    [% INCLUDE header.html subtitle = 'Edit Post' %]
     <form [% IF !post_to %]action="/posts"[% ELSE %]action="[% post_to %]"[% END %] method="post">
       <fieldset>
 	[% IF post.title %]
