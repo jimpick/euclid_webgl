@@ -1,1 +1,1 @@
-{ "name": "Penman", "post_install": "/setup", "admin": "/admin" }
+{ "name": "Penman", "post_install": "/setup", "admin": "/admin", origin: "git@smart.joyent.es:penman.smart.joyent.es.git" }
