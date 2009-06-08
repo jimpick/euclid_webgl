@@ -235,3 +235,45 @@ GET("/signout", function() {
   this.session.save();
   return redirect("/");
 });
+
+GET("/users", function() {
+  this.users = User.search({});
+  return template("/users.html");
+});
+
+POST("/users", function() {
+  this.users = User.search({});
+
+  var rbody = this.request.body;
+  if ( ! rbody['user.password'] instanceof Array ) {
+    this.error.password = true;
+    return template("/users.html");
+  }
+
+  var pw1 = rbody['user.password'][0];
+  var pw2 = rbody['user.password'][1];
+  if (pw1 != pw2) {
+    this.error.password = true;
+    return template("/users.html");
+  }
+
+  var theUser =	new User( rbody['user.name'] );
+  theUser.password = rbody['user.password'][0];
+  theUser.save();
+
+  // add the user to the list, but don't need to search completely again
+  this.users.push( theUser );
+
+  return template("/users.html");
+});
+
+DELETE(/\/users\/(.+)/, function( aUsername ) {
+  this.assertAuth();
+  var theUser = User.get( aUsername );
+  theUser.remove();
+
+  this.response.code = 200;
+  system.use("org.json.json2");
+  this.response.body = JSON.stringify({ status: "ok" });
+  throw this.response;
+});

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>All Users</title>
+    <link rel="stylesheet" href="/basic.css">
+    <script type="application/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="application/javascript">
+      google.load("jquery", "1.3.2");
+    </script>
+    <script type="application/javascript" src="/js/delete.js"></script>
+  </head>
+  <body>
+    <header>All Users</header>
+    <table>
+      <thead>
+	<tr>
+	  <td>Username</td>
+	  <td>Actions</td>
+	</tr>
+      </thead>
+      <tbody>
+	[% FOREACH vuser = users %]
+	<tr id="row_[% vuser.id %]">
+	  <td>
+	    [% vuser.id %]
+	  </td>
+	  <td>
+	    [% IF vuser.id != user.id %]
+	    <a href="/users/[% vuser.id %]" class="delete" data-remove="row_[% vuser.id %]">delete</a>
+	    [% END %]
+	  </td>
+	</tr>
+	[% END %]
+      </tbody>
+    </table>
+    <div class="spacer">&nbsp;</div>
+
+    <form method="post">
+      <fieldset>
+	<legend>New User</legend>
+	<div class="field">
+	  <label for="un">Username</label>
+	  <input type="text" name="user.name" id="un">
+	</div>
+	[% IF error.password %]
+	<p class="error">
+	  Passwords do not match
+	</p>
+	[% END %]
+	<div class="field">
+	  <label for="pw">Password</label>
+	  <input type="password" name="user.password" id="pw">
+	</div>
+	<div class="field">
+	  <label for="pw2">Confirmation</label>
+	  <input type="password" name="user.password" id="pw2">
+	</div>
+	<input type="submit" class="button" value="Save">
+      </fieldset>
+    </form>
+  </body>
+</html>
