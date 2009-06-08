@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/basic.css">
+    <title>Blog - Settings</title>
+  </head>
+  <body>
+    <header>Blog Settings</header>
+    <form method="post">
+      <fieldset>
+	<legend>Blog Basics</legend>
+	<div class="field">
+	  <label for="bn">Name</label>
+	  <input type="text" id="bn" name="name" value="[% blog.name %]">
+	</div>
+	<div class="field">
+	  <label for="yn">Your Name</label>
+	  <input type="text" id="yn" name="author" value="[% blog.author %]">
+	</div>
+	<input type="submit" class="button" value="Save">
+      </fieldset>
+	  
+    </form>
+  </body>
+</html>

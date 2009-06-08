@@ -1,0 +1,9 @@
+*~
+etc/rsp.conf
+git/
+Makefile
+blib
+pm_to_blib
+\#*
+.\#*
+log

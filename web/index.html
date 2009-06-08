@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog</title>
+    <link rel="stylesheet" href="/basic.css">
+  </head>
+  <body>
+    <header>[% blog.name %]</header>
+    <section>
+      <ul>
+	[% FOREACH post = posts %]
+	<li>
+	  <div class="article" id="[% post.id %]">
+	    <header>[% post.title %]</header>
+	    <div class="body">
+	      [% post.body %]
+	    </div>
+	    <div class="byline">
+	      Posted on [% post.created %] by [% blog.author %].  <a href="[% post.uri %]">Permalink</a>
+	    </div>
+	  </div>
+	</li>
+	[% END %]
+      </ul>
+    </section>
+  </body>
+</html>

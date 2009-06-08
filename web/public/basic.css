@@ -1,0 +1,91 @@
+body {
+  width: 50em;
+  margin: auto;
+  font-family: 'lucida grande','lucida sans unicade',sans-serif;
+}
+
+body > header {
+  font-family: 'georgia','bitstream vera serif', serif;
+  font-size:   1.5em;
+  color: #800;
+  border-bottom: 1px solid #800;
+  display: block;
+  margin-bottom: 1em;
+}
+
+section > ul {
+  padding-left: 0;
+}
+
+section > ul > li {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+div.article {
+  width: 40em;
+  margin-left: 5em;
+  margin-right: 5em;
+}
+
+div.article > header {
+  font-family: 'georgia','bitstream vera serif', serif;
+  font-size:   1.3em;
+  color: #800;
+}
+
+div.byline {
+  font-size: .8em;
+  margin-bottom: 1em;
+}
+
+fieldset {
+  border: none;
+}
+
+legend {
+  font-family: 'georgia','bitstream vera serif', serif;
+  font-size:   1.3em;
+  color: #800;
+  margin: 0;
+  padding: 0;
+}
+
+div.field label {
+  display: block;
+  float:   left;
+  width:   8em;
+}
+
+div.field input {
+  width: 20em;
+  margin-bottom: .2em;
+}
+
+div.field input#title {
+  width: 20em;
+  font-family: 'georgia','bitstream vera serif', serif;
+  font-size: 1.3em;
+  margin-bottom: .2em;
+}
+
+div.field input.clickedit {
+  cursor: pointer;
+  border: none;
+}
+
+input.clickedit.focused {
+  background-color: #fff6a3;
+  cursor: text;
+}
+
+input.button {
+  border: 1px solid #888;
+  background-color: #eee;
+  color: #222;
+  font-family: 'georgia','bitstream vera serif', serif;
+  font-size: 1.1em;
+  margin-top: 1em;
+  width: 5em;
+}

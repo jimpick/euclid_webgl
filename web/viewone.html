@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog</title>
+    <link rel="stylesheet" href="/basic.css">
+  </head>
+  <body>
+    <header>James' Development Blog</header>
+    <section>
+      <div class="article" id="[% post.id %]">
+	<header>[% post.title %]</header>
+	<div class="body">
+	  [% post.body %]
+	</div>
+	<div class="byline">
+	  Posted on [% post.created %] by [% post.owner %].  <a href="[% post.uri %]">Permalink</a>
+	</div>
+      </div>
+    </section>
+    <section>
+      <div class="article">
+	<header>Comments</header>
+	[% IF !post.comments %]
+	<p>
+	  No one has commented yet! Be the first!
+	</p>
+	[% END %]
+      </div>
+    </section>
+  </body>
+</html>
