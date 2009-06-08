@@ -71,7 +71,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
         for each ( var key in props ) {
 	  if ( propertyMap[key] ) {
 	    if ( propertyMap[key] instanceof Function )
-	      tmpObject[key] = propertyMap[key].apply(mapped, []);
+	      tmpObject[key] = propertyMap[key].apply(elem, []);
 	    else
 	      tmpObject[key] = elem[ propertyMap[key] ];
 	  } else {
@@ -84,7 +84,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
     else
       mapped = elem;
     if ( mapped.title ) {
-      var body = new XML("<div>" + mapped.body.replace(/&nbsp;/g, " ") + "</div>");
+      var body = new XML("<div xmlns=\"http://www.w3.org/1999/xhml\">" + mapped.body.replace(/&nbsp;/g, " ") + "</div>");
       myList += <entry>
 	<title>{mapped.title}</title>
 	  <link rel="alternate" type="text/html" href={mapped.uri}/>
@@ -97,7 +97,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
 	    <email>{mapped.email||"nospam@kthnx"}</email>
 	  </author>
 	  <content type="xhtml" xml:lang="en" xml:base="http://diveintomark.org/">
-	    <div xmlns="http://www.w3.org/1999/xhtml">{body}</div>
+	    {body}
 	  </content>
       </entry>;
     }
