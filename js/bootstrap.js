@@ -101,6 +101,9 @@ Post.titleToSlug = function( aTitle ) {
   return aTitle.toLowerCase().replace(/\s/g, '_').substr(0, 25);
 };
 
+var Feed = new Resource('feed');
+Feed.transient = true;
+
 GET("/", function() {
   this.posts = Post.search({}).sort(function(a,b) {
     if ( b.created > a.created ) return 1;
@@ -276,4 +279,15 @@ DELETE(/\/users\/(.+)/, function( aUsername ) {
   system.use("org.json.json2");
   this.response.body = JSON.stringify({ status: "ok" });
   throw this.response;
+});
+
+GET('/feed.atom', function(){
+	this.feed =  new Feed();
+	var theBlog = 
+	this.feed.title = this.blog.name
+	this.feed.owner = this.blog.author
+	this.feed.year = new Date().getFullYear();
+	this.feed.entries = Post.search({}, { sort: 'created' }).reverse();
+	this.feed.updated_at = Post.get(this.feed.entries[this.feed.entries.length - 1].id).updated
+	return template("/atom.feed.xml");
 });
