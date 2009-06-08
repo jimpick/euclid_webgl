@@ -123,9 +123,6 @@ Post.titleToSlug = function( aTitle ) {
   return aTitle.toLowerCase().replace(/\s/g, '_').substr(0, 25);
 };
 
-var Feed = new Resource('feed');
-Feed.transient = true;
-
 GET("/", function() {
   this.posts = Post.search({}).sort(function(a,b) {
     if ( b.created > a.created ) return 1;
