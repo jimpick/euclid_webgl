@@ -3,6 +3,14 @@ system.use("com.joyent.Resource");
 
 enable("Sessions");
 
+/* wipe users...
+before(function() {
+  User.search({}).forEach( function( e ) {
+    e.remove();
+  });
+});
+*/
+
 var User = new Resource('user', {
 
   '@constructor': function( aUsername ) {
@@ -21,6 +29,23 @@ var User = new Resource('user', {
   }
 
 });
+
+User.prototype.validatePassword = function( aPassword ) {
+  var sha1  = system.digest.sha1.hex( aPassword );
+  return this.password == sha1;
+};
+
+User.prototype.authenticate = function( aPassword, theStack ) {
+  this.validatePassword( aPassword );
+  theStack.session.userid = this.id;
+  theStack.user = this;
+  theStack.session.save();
+};
+
+User.authenticate = function( aUsername, aPassword, theStack ) {
+  var theUser = User.get( aUsername );
+  theUser.authenticate( aPassword, theStack );
+};
 
 var Post = new Resource('post', {
   '@constructor': function( aTitle, aBody ) {
@@ -52,6 +77,11 @@ before(function() {
 });
 
 before(function() {
+
+  this.assertAuth = function() {
+    if (!this.user) return redirect("/");
+  };
+
   if ( this.session.userid ) {
     try {
       this.user = User.get( this.session.userid );
@@ -81,6 +111,7 @@ GET("/", function() {
 });
 
 GET("/posts/blank", function() {
+  this.assertAuth();
   this.post_to = "/posts";
   return template("/edit.html");
 });
@@ -91,17 +122,20 @@ GET(/\/posts\/(.+)/, function( aSlug ) {
 });
 
 GET(/\/edit(\/(.+)|)$/, function( throwAway, aSlug ) {
+  this.assertAuth();
   this.post = Post.get( aSlug );
   this.post_to = "/posts/" + aSlug;
   return template("/edit.html");
 });
 
 GET("/posts", function() {
+  this.assertAuth();
   this.posts = Post.search({}, { sort: 'created' }).reverse();
   return template("/list.html");
 });
 
 POST("/posts", function() {
+  this.assertAuth();
   var title  = this.request.body.title;
   var body   = this.request.body.body;
 
@@ -112,6 +146,7 @@ POST("/posts", function() {
 });
 
 POST(/\/posts\/(.+)/, function( aSlug ) {
+  this.assertAuth();
   var thePost = Post.get( aSlug );
   thePost.title = this.request.body.title;
   thePost.body  = this.request.body.body;
@@ -120,6 +155,7 @@ POST(/\/posts\/(.+)/, function( aSlug ) {
 });
 
 DELETE(/posts\/(.+)/, function( aSlug ) {
+  this.assertAuth();
   var thePost = Post.get( aSlug );
   thePost.remove();
   this.response.code = 200;
@@ -129,10 +165,12 @@ DELETE(/posts\/(.+)/, function( aSlug ) {
 });
 
 GET("/settings", function() {
+  this.assertAuth();
   return template("/settings.html");
 });
 
 POST("/settings", function() {
+  this.assertAuth();
   var keys = ['name', 'author'];
   for each ( var key in keys ) {
     if ( this.request.body[key] )
@@ -142,12 +180,58 @@ POST("/settings", function() {
   redirect("/");
 });
 
+GET("/admin", function() {
+  if ( this.user ) return template("/admin.html");
+  else return template("/signin.html");
+});
+
 POST("/admin", function() {
   var username = this.request.body.username;
   var password = this.request.body.password;
-  if ( User.authenticate( username, password, this ) )
+  try {
+    User.authenticate( username, password, this );
     return template("/admin.html");
-  else
-    return redirect("/");
+  } catch(e) {
+    this.error = true;
+    return template("/signin.html");
+  }
+});
 
+GET("/setup", function() {
+  if ( User.search({}).length ) throw new Error("Not Found");
+  return template("/setup.html");
+});
+
+POST("/setup", function() {
+  if (!this.error) this.error = {};
+  if ( User.search({}).length ) throw new Error("Not Found");
+  var rbody = this.request.body;
+  if ( ! rbody['user.password'] instanceof Array ) {
+    this.error.password = true;
+    return template("/setup.html");
+  }
+
+  var pw1 = rbody['user.password'][0];
+  var pw2 = rbody['user.password'][1];
+  if (pw1 != pw2) {
+    this.error.password = true;
+    return template("/setup.html");
+  }
+
+  var theUser = new User( rbody['user.name'] );
+  theUser.password = pw1;
+  theUser.save();
+  theUser.authenticate( pw1, this );
+
+  this.blog.name = rbody['blog.name'];
+  this.blog.save();
+
+  return template("/admin.html");
+});
+
+GET("/signout", function() {
+  delete this.session.userid;
+  delete this.user;
+  this.session.save();
+  return redirect("/");
 });

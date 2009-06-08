@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>New Post</title>
+    <title>Login</title>
     <link rel="stylesheet" href="/basic.css">
     <script type="application/javascript" src="http://www.google.com/jsapi"></script>
     <script type="application/javascript" src="/js/ckeditor/ckeditor.js"></script>
@@ -12,22 +12,24 @@
     <script type="application/javascript" src="/js/clickedit.js"></script>
   </head>
   <body>    
-    <header>New Post</header>
-    <form [% IF !post_to %]action="/posts"[% ELSE %]action="[% post_to %]"[% END %] method="post">
+    <header>Login</header>
+    <form method="post">
       <fieldset>
-	[% IF post.title %]
-	<div class="field">
-	  <input class="clickedit" type="text" id="title" name="title" value="[% post.title %]">
-	</div>
-	[% ELSE %]
-	<div class="field">
-	  <input class="clickedit untitled" type="text" id="title" name="title" value="Untitled">
-	</div>
+	<legend>User Details</legend>
+	[% IF error %]
+	<p class="error">
+	  Sorry, we couldn't find that username or password.
+	</p>
 	[% END %]
 	<div class="field">
-	  <textarea id="b" name="body">[% post.body %]</textarea>
+	  <label for="un">Username</label>
+	  <input id="un" type="text" name="username" value="">
 	</div>
-	<input type="submit" class="button" value="Save">
+	<div class="field">
+	  <label for="pw">Password</label>
+	  <input id="pw" type="password" name="password" value="">
+	</div>
+	<input type="submit" class="button" value="Sign In">
       </fieldset>
     </form>
   </body>

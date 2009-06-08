@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Penman Setup</title>
+    <link rel="stylesheet" href="/basic.css">
+  </head>
+  <body>
+    <header>Penman Setup</header>
+    <p>
+      Welcome to Penman!  Penman is a simple blog written for the Smart platform.  It has been
+      constructed as a demo, but should be more than fully-featured by the time we are done with
+      it.
+    </p>
+    <p>
+      Right now you'll get an opportunity to setup Penman for the first time.
+    </p>
+    <form method="post">
+      <fieldset>
+	<legend>Blog Details</legend>
+	<div class="field">
+	  <label for="bn">Blog Name</label>
+	  <input type="text" name="blog.name" id="bn">
+	</div>
+      </fieldset>
+      <fieldset>
+	<legend>Personal Details</legend>
+	<div class="field">
+	  <label for="un">Username</label>
+	  <input type="text" name="user.name" id="un">
+	</div>
+	[% IF error.password %]
+	<p class="error">
+	  Passwords do not match
+	</p>
+	[% END %]
+	<div class="field">
+	  <label for="pw">Password</label>
+	  <input type="password" name="user.password" id="pw">
+	</div>
+	<div class="field">
+	  <label for="pw2">Confirmation</label>
+	  <input type="password" name="user.password" id="pw2">
+	</div>
+      </fieldset>
+      <input type="submit" class="button" value="Save">
+    </form>
+  </body>
+</html>
