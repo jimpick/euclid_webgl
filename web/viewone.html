@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>[% blog.name %] [% post.title %]</title>
+    [% SET subtitle = post.title %]
+    [% INCLUDE title.html %]
+    [% INCLUDE "stylesheet.html" %]
     <link rel="stylesheet" href="/basic.css">
   </head>
   <body>
