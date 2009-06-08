@@ -20,7 +20,6 @@ Array.prototype.toFeed = function( feedOptions, withElement ) {
       mapped = elem;
     if ( mapped.title ) {
       var body = new XML("<div>" + mapped.body.replace(/&nbsp;/g, " ") + "</div>");
-      system.console.log(body);
       myList += <entry>
 	<title>{mapped.title}</title>
 	  <link rel="alternate" type="text/html" href={mapped.uri}/>
