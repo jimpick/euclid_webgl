@@ -56,6 +56,28 @@ var Post = new Resource('post', {
   }
 });
 
+Post.prototype.__defineGetter__("bodyAsXML", function() {
+  var table = {
+    "&quot"  : "&#34",
+    "&amp"   : "&#38",
+    "&lt"    : "&#60",
+    "&gt"    : "&#62",
+    "&nbsp"  : "&#160",
+    "&iexcl" : "&#161",
+    "&cent"  : "&#162",
+    "&pound" : "&#163",
+    "&curren": "&#164",
+    "&yen"   : "&#165",
+    "&brvbar": "&#166",
+    "&sect"  : "&#167"
+  };
+  var cleanbody = this.body;
+  for ( var key in table ) {
+    cleanbody = cleanbody.replace(new RegExp(key, "g"), table[key]);
+  }
+  return cleanbody.replace(/&[^#]/g, "&#38");
+});
+
 before(function() {
   // get this set up so that when we need to we can generate
   // permalinks for articles without too much hassle.
@@ -282,12 +304,12 @@ DELETE(/\/users\/(.+)/, function( aUsername ) {
 });
 
 GET('/feed.atom', function(){
-	this.feed =  new Feed();
-	var theBlog = 
-	this.feed.title = this.blog.name
-	this.feed.owner = this.blog.author
-	this.feed.year = new Date().getFullYear();
-	this.feed.entries = Post.search({}, { sort: 'created' }).reverse();
-	this.feed.updated_at = Post.get(this.feed.entries[this.feed.entries.length - 1].id).updated
-	return template("/atom.feed.xml");
+  system.use("Feed");
+  return Post.search({}, { sort: 'created' }).reverse().toFeed({
+    title:   this.blog.name,
+    tag:     "atomfeed",
+    uri:     system.sprintf("http://%s/", this.request.headers.Host),
+    self:    system.sprintf("http://%s/feed.atom", this.request.headers.Host),
+    owner:   this.blog.author
+  });
 });
