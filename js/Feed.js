@@ -1,4 +1,4 @@
-Array.prototype.toFeed = function( feedOptions, withElement ) {
+Array.prototype.toFeed = function( feedOptions, propertyMap ) {
   var year = new Date().getFullYear();
   var newest = this[ this.length - 1 ].updated;
   var feed = <feed xmlns="http://www.w3.org/2005/Atom">
@@ -8,14 +8,31 @@ Array.prototype.toFeed = function( feedOptions, withElement ) {
     <link rel="alternate" type="text/html" hreflang="en" href={feedOptions.uri}/>
     <link rel="self" type="application/atom+xml" href={feedOptions.self}/>
     <rights>Copyright (c) {year} {feedOptions.owner}</rights>
-    <generator uri="http://docs.smart.joyent.es/api/Feed.js" version="1.0">Smart Platform</generator>
+    <generator uri="http://docs.smart.joyent.es/docs/com/joyent/Feed.html" version="1.0">Smart Platform</generator>
   </feed>;
 
   var myList = new XMLList();
   for each ( var elem in this ) {
     var mapped;
-    if ( withElement )
-      mapped = withElement.apply( elem, [] );
+    if ( propertyMap ) {
+      if ( propertyMap instanceof Function )
+	mapped = propertyMap.apply( elem, [] );
+      else if ( propertyMap instanceof Object ) {
+	var tmpObject = {};
+	var props = ['title', 'uri', 'tag', 'updated', 'created', 'owner', 'email', 'body'];
+        for each ( var key in props ) {
+	  if ( propertyMap[key] ) {
+	    if ( propertyMap[key] instanceof Function )
+	      tmpObject[key] = propertyMap[key].apply(mapped, []);
+	    else
+	      tmpObject[key] = elem[ propertyMap[key] ];
+	  } else {
+	    tmpObject[key] = elem[key];
+	  }
+	}
+        mapped = tmpObject;
+      }
+    }
     else
       mapped = elem;
     if ( mapped.title ) {

@@ -307,9 +307,13 @@ GET('/feed.atom', function(){
   system.use("Feed");
   return Post.search({}, { sort: 'created' }).reverse().toFeed({
     title:   this.blog.name,
-    tag:     "atomfeed",
+    tag:     system.digest.sha1.hex( this.blog.name ),
     uri:     system.sprintf("http://%s/", this.request.headers.Host),
     self:    system.sprintf("http://%s/feed.atom", this.request.headers.Host),
     owner:   this.blog.author
+  }, {
+    'tag': function() {
+      return system.digest.sha1.hex( this.id );
+    }
   });
 });
