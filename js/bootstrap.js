@@ -3,6 +3,10 @@ system.use("com.joyent.Resource");
 
 enable("Sessions");
 
+/*
+ * this needs to be a value that is set up for the user automatically
+ * I'll see what I can do about this later today.
+ */
 system.hostname = "127.0.0.1:8080";
 
 var User = new Resource('user', {
