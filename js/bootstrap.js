@@ -124,11 +124,11 @@ Post.titleToSlug = function( aTitle ) {
 };
 
 GET("/", function() {
-  this.posts = Post.search({}).sort(function(a,b) {
+  this.posts = Post.search({}, { sort: 'created', limit: 10 } ).sort(function(a,b) {
     if ( b.created > a.created ) return 1;
     else if ( a.created > b.created ) return -1;
     return 0;
-  }).splice(0,10);
+  });
   return template("/index.html");
 });
 
@@ -315,3 +315,4 @@ GET('/feed.atom', function(){
     }
   });
 });
+
