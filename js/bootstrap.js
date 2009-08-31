@@ -225,6 +225,7 @@ GET("/setup", function() {
 });
 
 POST("/setup", function() {
+  system.console.log(uneval( this.request.body ));
   if (!this.error) this.error = {};
   if ( User.search({}).length ) throw new Error("Not Found");
   var rbody = this.request.body;
@@ -316,3 +317,7 @@ GET('/feed.atom', function(){
   });
 });
 
+GET("/feed.json", function() {
+  system.use("org.json.json2");
+  JSON.stringify( Post.search({},{sort: 'created', reverse: true}) );
+});
