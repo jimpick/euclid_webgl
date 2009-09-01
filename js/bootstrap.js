@@ -225,7 +225,9 @@ GET("/setup", function() {
 });
 
 POST("/setup", function() {
-  system.console.log(uneval( this.request.body ));
+
+       return uneval(this.request.body);
+
   if (!this.error) this.error = {};
   if ( User.search({}).length ) throw new Error("Not Found");
   var rbody = this.request.body;
