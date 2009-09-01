@@ -225,9 +225,6 @@ GET("/setup", function() {
 });
 
 POST("/setup", function() {
-
-  return uneval(this.request.body);g
-
   if (!this.error) this.error = {};
   if ( User.search({}).length ) throw new Error("Not Found");
   var rbody = this.request.body;
@@ -236,13 +233,7 @@ POST("/setup", function() {
     return template("/setup.html");
   }
 
-  var pw1 = rbody['user.password'][0];
-  var pw2 = rbody['user.password'][1];
-  if (pw1 != pw2) {
-    this.error.password = true;
-    return template("/setup.html");
-  }
-
+  var pw1 = rbody['user.password'];
   var theUser = new User( rbody['user.name'] );
   theUser.password = pw1;
   theUser.save();
