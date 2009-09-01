@@ -226,7 +226,7 @@ GET("/setup", function() {
 
 POST("/setup", function() {
 
-       return uneval(this.request.body);
+  return uneval(this.request.body);g
 
   if (!this.error) this.error = {};
   if ( User.search({}).length ) throw new Error("Not Found");
