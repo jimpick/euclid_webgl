@@ -124,6 +124,7 @@ Post.titleToSlug = function( aTitle ) {
 };
 
 GET("/", function() {
+  if (!this.blog.name) return redirect("/setup");
   this.posts = Post.search({}, { sort: 'created', limit: 10, reverse: true } ).sort(function(a,b) {
     if ( b.created > a.created ) return 1;
     else if ( a.created > b.created ) return -1;
