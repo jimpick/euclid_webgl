@@ -3,14 +3,6 @@ system.use("com.joyent.Resource");
 
 enable("Sessions");
 
-/* wipe users...
-before(function() {
-  User.search({}).forEach( function( e ) {
-    e.remove();
-  });
-});
-*/
-
 var User = new Resource('user', {
 
   '@constructor': function( aUsername ) {
@@ -305,13 +297,8 @@ GET('/feed.atom', function(){
     owner:   this.blog.author
   }, {
     'tag': function() {
-      if ( this.id )
-	return system.digest.sha1.hex( this.id );
+      if ( this.id ) return system.digest.sha1.hex( this.id );
+      return system.digest.sha1.hex( system.uuid() ); // err, just in case, or something.
     }
   });
-});
-
-GET("/feed.json", function() {
-  system.use("org.json.json2");
-  JSON.stringify( Post.search({},{sort: 'created', reverse: true}) );
 });
