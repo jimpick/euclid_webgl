@@ -86,7 +86,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
     if ( mapped.title ) {
       var body = new XML([
 	"<div xmlns=\"http://www.w3.org/1999/xhtml\">",
-	//mapped.body.replace(/&nbsp;/g, " "),
+	mapped.body.replace(/&nbsp;/g, " "),
 	"</div>"
       ].join(""));
       myList += <entry>
