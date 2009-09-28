@@ -84,11 +84,11 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
     else
       mapped = elem;
     if ( mapped.title ) {
-      var body = new XML([
+      /* var body = new XML([
 	"<div xmlns=\"http://www.w3.org/1999/xhtml\">",
 	mapped.body.replace(/&nbsp;/g, " "),
 	"</div>"
-      ].join(""));
+      ].join("")); */
       myList += <entry>
 	<title>{mapped.title}</title>
 	  <link rel="alternate" type="text/html" href={mapped.uri}/>
