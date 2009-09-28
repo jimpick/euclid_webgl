@@ -60,7 +60,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
   </feed>;
 
   var myList = new XMLList();
-  for each ( var elem in this ) {
+  /* for each ( var elem in this ) {
     var mapped;
     if ( propertyMap ) {
       if ( propertyMap instanceof Function )
@@ -105,7 +105,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
 	  </content>
       </entry>;
     }
-  }
+  } */
   feed.entry = myList;
   // return ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", feed.toXMLString()].join("\n");
   return uneval(feed);
