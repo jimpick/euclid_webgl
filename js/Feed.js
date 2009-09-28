@@ -85,7 +85,7 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
       mapped = elem;
     if ( mapped.title ) {
       var body = new XML([
-	"<div xmlns=\"http://www.w3.org/1999/xhml\">",
+	"<div xmlns=\"http://www.w3.org/1999/xhtml\">",
 	mapped.body.replace(/&nbsp;/g, " "),
 	"</div>"
       ].join(""));
@@ -107,7 +107,8 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
     }
   }
   feed.entry = myList;
-  return ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", feed.toXMLString()].join("\n");
+  // return ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", feed.toXMLString()].join("\n");
+  return uneval(feed);
 };
 
 
