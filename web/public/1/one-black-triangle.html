@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.00 Transitional//EN">
+<html>
+<head>
+
+<!-- Found at: http://bjartr.blogspot.com/2009/09/webgl.html -->
+<!-- Ripped off without asking permission just so I can see -->
+<!-- how it works. Any docs anywhere? -->
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	void main(void) {
+		gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+	}
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+	attribute vec4 aVertex;
+
+	void main(void) {
+		gl_Position = aVertex;
+	}
+</script>
+
+<script type="application/x-javascript">
+
+var gl = null;
+var shaders = { };
+
+function getShader(gl, id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript)
+        return null;
+
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+        if (k.nodeType == 3)
+            str += k.textContent;
+        k = k.nextSibling;
+    }
+
+    var shader;
+    if (shaderScript.type == "x-shader/x-fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (shaderScript.type == "x-shader/x-vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderi(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader));
+        return null;
+    }
+
+    return shader;
+}
+
+function renderStart() {
+	var canvas = document.getElementById("canvas");
+
+	var gl = null;
+	try { 
+		if (!gl)
+	    	gl = canvas.getContext("moz-webgl");
+	} catch (e) { }
+	try { 
+		if (!gl)
+	    	gl = canvas.getContext("webkit-3d");
+	} catch (e) { }
+
+	if (!gl) {
+		alert("Can't find a WebGL context; is it enabled?");
+	  	return;
+	}
+
+	 
+	if (!("sp" in shaders)) {
+		shaders.fs = getShader(gl, "shader-fs");
+		shaders.vs = getShader(gl, "shader-vs");
+
+		shaders.sp = gl.createProgram();
+		gl.attachShader(shaders.sp, shaders.vs);
+		gl.attachShader(shaders.sp, shaders.fs);
+		gl.linkProgram(shaders.sp);
+
+		if (!gl.getProgrami(shaders.sp, gl.LINK_STATUS)) {
+			alert(gl.getProgramInfoLog(shader));
+		}
+
+		gl.useProgram(shaders.sp);
+	}
+
+	var sp = shaders.sp;
+
+	var va = gl.getAttribLocation(sp, "aVertex");
+
+	function setMatrixUniform() {
+		gl.uniformMatrix4fv(mvUniform, false, new CanvasFloatArray(mvMatrix.flatten()));
+	}
+
+	// set up vertex buffers
+	var buffers = { };
+    buffers.position = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+
+    var vertices = [  0.0,  0.5,  0.0,
+					 -0.5, -0.5,  0.0,
+					  0.5, -0.5,  0.0  ];
+
+	gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices), gl.STATIC_DRAW);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+	gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(va);
+
+	var numVertexPoints = 3;
+
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	gl.clearDepthf(1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.enable(gl.DEPTH_TEST);
+
+
+	function draw() {
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.drawArrays(gl.TRIANGLES, 0, 3);
+	}
+
+
+	var buffers = { };
+	buffers.position = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+	gl.enableVertexAttribArray(va);
+
+	var vertices = [  0.0,  0.5,  0.0,
+				 -0.5, -0.5,  0.0,
+				  0.5, -0.5,  0.0  ];
+
+	gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices), gl.STATIC_DRAW);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+	gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
+
+
+	draw();
+
+}
+
+    </script>
+</head>
+
+
+  <body onload="renderStart()">
+    <canvas id="canvas" style="border: 2px solid blue" width="300" height="300"></canvas>
+  </body>
+
+</html>
