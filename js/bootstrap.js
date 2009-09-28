@@ -288,7 +288,7 @@ DELETE(/\/users\/(.+)/, function( aUsername ) {
 });
 
 GET('/feed.atom', function(){
-  system.use("com.joyent.Feed");
+  system.use("Feed");
   return Post.search({}, { sort: 'created',  limit: 10, reverse: true }).toFeed({
     title:   this.blog.name,
     tag:     system.digest.sha1.hex( this.blog.name ),
