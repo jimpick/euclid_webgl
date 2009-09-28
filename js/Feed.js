@@ -84,11 +84,11 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
     else
       mapped = elem;
     if ( mapped.title ) {
-      /* var body = new XML([
+      var body = new XML([
 	"<div xmlns=\"http://www.w3.org/1999/xhtml\">",
-	mapped.body.replace(/&nbsp;/g, " "),
+	//mapped.body.replace(/&nbsp;/g, " "),
 	"</div>"
-      ].join("")); */
+      ].join(""));
       myList += <entry>
 	<title>{mapped.title}</title>
 	  <link rel="alternate" type="text/html" href={mapped.uri}/>
@@ -101,13 +101,13 @@ Array.prototype.toFeed = function( feedOptions, propertyMap ) {
 	    <email>{mapped.email||"jim@jimpick.com"}</email>
 	  </author>
 	  <content type="xhtml" xml:lang="en" xml:base="http://diveintomark.org/">
+            {body}
 	  </content>
       </entry>;
     }
   }
   feed.entry = myList;
-  // return ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", feed.toXMLString()].join("\n");
-  return uneval(feed);
+  return ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", feed.toXMLString()].join("\n");
 };
 
 
