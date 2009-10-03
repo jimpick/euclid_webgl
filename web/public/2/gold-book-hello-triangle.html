@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.00 Transitional//EN">
+<html>
+<head>
+
+<!--
+// Based off of Hello Triangle Example in Chapter 2 of the
+// OpenGL ES 2.0 Programming Guide "Gold Book"
+// http://opengles-book.com/
+-->
+
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec4 vPosition;
+
+  void main(void) {
+    gl_Position = vPosition;
+  }
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+  void main(void) {
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  }
+</script>
+
+<script type="text/javascript" src="../jquery-1.3.2.min.js" type=></script>
+
+<script type="text/javascript">
+
+function loadShader(gl, id) {
+    var shader;
+    var shaderType;
+    var scriptElem = $("#" + id)
+    var type = scriptElem.attr("type");
+    console.log("Jim1: " + id);
+    console.log("Jim2: " + type);
+    if (type == "x-shader/x-fragment") {
+        shaderType = gl.FRAGMENT_SHADER;
+    } else if (type == "x-shader/x-vertex") {
+        shaderType = gl.VERTEX_SHADER;
+    }
+    console.log("Jim3: " + shaderType);
+
+    // gl.createShader(shaderType);
+    var shader;
+    if (type == "x-shader/x-fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (type == "x-shader/x-vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+    var str = scriptElem.text();
+    console.log("Jim4: " + str);
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderi(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader));
+        return null;
+    }
+
+    return shader;
+}
+
+function init(gl) {
+  var shaders = {}
+
+  if (!("sp" in shaders)) {
+    shaders.vs = loadShader(gl, "shader-vs");
+    shaders.fs = loadShader(gl, "shader-fs");
+    console.log("Jim6");
+
+    shaders.sp = gl.createProgram();
+    gl.attachShader(shaders.sp, shaders.vs);
+    gl.attachShader(shaders.sp, shaders.fs);
+    gl.linkProgram(shaders.sp);
+
+    if (!gl.getProgrami(shaders.sp, gl.LINK_STATUS)) {
+      alert(gl.getProgramInfoLog(shader));
+    }
+
+    gl.useProgram(shaders.sp);
+  }
+
+  var sp = shaders.sp;
+
+  var va = gl.getAttribLocation(sp, "vPosition");
+
+  function setMatrixUniform() {
+    gl.uniformMatrix4fv(mvUniform, false, new CanvasFloatArray(mvMatrix.flatten()));
+  }
+
+  // set up vertex buffers
+  var buffers = { };
+  buffers.position = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+
+  var vertices = [  0.0,  0.5, 0.0,
+                   -0.5, -0.5, 0.0,
+                    0.5, -0.5, 0.0 ];
+
+  gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices),
+    gl.STATIC_DRAW);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+  gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(va);
+
+  var numVertexPoints = 3;
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.clearDepthf(1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+
+  function draw() {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  var buffers = {};
+  buffers.position = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+  gl.enableVertexAttribArray(va);
+
+  var vertices = [  0.0,  0.5, 0.0,
+                   -0.5, -0.5, 0.0,
+                    0.5, -0.5, 0.0 ];
+
+  gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices),
+    gl.STATIC_DRAW);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+  gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
+
+  draw();
+}
+
+$(function(){
+  // Document is ready
+  var canvas = document.getElementById("canvas");
+  var gl = null;
+  try { 
+    if (!gl) {
+      gl = canvas.getContext("moz-webgl");
+    }
+  } catch (e) {}
+  try { 
+    if (!gl) {
+      gl = canvas.getContext("webkit-3d");
+    }
+  } catch (e) {}
+
+  if (!gl) {
+    alert("Can't find a WebGL context; is it enabled?");
+    return;
+  }
+
+  init(gl);
+});
+
+    </script>
+</head>
+
+<body>
+  <canvas id="canvas" style="border: 2px solid blue" width="300" height="300"></canvas>
+</body>
+
+</html>
