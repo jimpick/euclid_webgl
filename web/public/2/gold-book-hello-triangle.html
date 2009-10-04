@@ -3,21 +3,23 @@
 <head>
 
 <!--
-// Based off of Hello Triangle Example in Chapter 2 of the
-// OpenGL ES 2.0 Programming Guide "Gold Book"
-// http://opengles-book.com/
+Based off of Hello Triangle Example in Chapter 2 of the
+OpenGL ES 2.0 Programming Guide "Gold Book"
+http://opengles-book.com/
+
+By Jim Pick - Public Domain
 -->
 
 <script id="shader-vs" type="x-shader/x-vertex">
   attribute vec4 vPosition;
 
-  void main(void) {
+  void main() {
     gl_Position = vPosition;
   }
 </script>
 
 <script id="shader-fs" type="x-shader/x-fragment">
-  void main(void) {
+  void main() {
     gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
   }
 </script>
@@ -26,114 +28,114 @@
 
 <script type="text/javascript">
 
+//
+// Create a shader object, load the shader source, and
+// compile the shader.
+//
 function loadShader(gl, id) {
-    var scriptElem = $("#" + id)
-    var type = scriptElem.attr("type");
-    var shaderType;
-    if (type == "x-shader/x-fragment") {
-        shaderType = gl.FRAGMENT_SHADER;
-    } else if (type == "x-shader/x-vertex") {
-        shaderType = gl.VERTEX_SHADER;
-    }
+  var scriptElem = $("#" + id)
+  var typeAttr = scriptElem.attr("type");
+  var type;
+  if (typeAttr == "x-shader/x-fragment") {
+    type = gl.FRAGMENT_SHADER;
+  } else if (typeAttr == "x-shader/x-vertex") {
+    type = gl.VERTEX_SHADER;
+  } else {
+    alert("Shader type not found or not known.");
+    return null;
+  }
 
-    var shader = gl.createShader(shaderType);
-    var str = scriptElem.text();
-    gl.shaderSource(shader, str);
-    gl.compileShader(shader);
+  // Create the shader object
+  var shader = gl.createShader(type);
+  // Load the shader source
+  gl.shaderSource(shader, scriptElem.text());
+  // Compile the shader
+  gl.compileShader(shader);
 
-    if (!gl.getShaderi(shader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(shader));
-        return null;
-    }
+  // Check the compile status
+  if (!gl.getShaderi(shader, gl.COMPILE_STATUS)) {
+    alert(gl.getShaderInfoLog(shader));
+    return null;
+  }
 
-    return shader;
+  return shader;
 }
 
+//
+// Initialize the shader and program object
+//
 function init(gl, userData) {
+
+  // Load the vertex/fragment shaders
   var vertexShader = loadShader(gl, "shader-vs");
   var fragmentShader = loadShader(gl, "shader-fs");
+  if (vertexShader == null || fragmentShader == null)
+    return false;
 
+  // Create the program object
   var programObject = gl.createProgram();
   gl.attachShader(programObject, vertexShader);
   gl.attachShader(programObject, fragmentShader);
-  // glBindAttribLocation(programObject, 0, "vPosition");
+
+  // Bind vPosition to attribute 0
+  gl.bindAttribLocation(programObject, 0, "vPosition");
+
+  // Link the program
   gl.linkProgram(programObject);
 
+  // Check the link status
   if (!gl.getProgrami(programObject, gl.LINK_STATUS)) {
     alert(gl.getProgramInfoLog(programObject));
+    return false;
   }
 
+  // Store the program object
   userData.programObject = programObject;
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  return true;
 }
 
+//
+// Draw a triangle using the shader pair created in Init()
+//
 function draw(gl, userData) {
+
+  var vertices = [  0.0,  0.5, 0.0,
+                   -0.5, -0.5, 0.0,
+                    0.5, -0.5, 0.0 ];
+
+  // Clear the color buffer
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // Use the program object
   gl.useProgram(userData.programObject);
 
-  var sp = userData.programObject;
-
-  var va = gl.getAttribLocation(sp, "vPosition");
-
-  function setMatrixUniform() {
-    gl.uniformMatrix4fv(mvUniform, false, new CanvasFloatArray(mvMatrix.flatten()));
-  }
-
-  // set up vertex buffers
-  var buffers = { };
-  buffers.position = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-
-  var vertices = [  0.0,  0.5, 0.0,
-                   -0.5, -0.5, 0.0,
-                    0.5, -0.5, 0.0 ];
-
+  // set up vertex buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices),
     gl.STATIC_DRAW);
   
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-  gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(va);
+  // Load the vertex data
+  gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(0);
 
-  var numVertexPoints = 3;
-
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
-  gl.clearDepthf(1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.enable(gl.DEPTH_TEST);
-
-  var buffers = {};
-  buffers.position = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-  gl.enableVertexAttribArray(va);
-
-  var vertices = [  0.0,  0.5, 0.0,
-                   -0.5, -0.5, 0.0,
-                    0.5, -0.5, 0.0 ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new CanvasFloatArray(vertices),
-    gl.STATIC_DRAW);
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-  gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
-
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 
+//
+// Main function - jQuery runs this when the document is ready
+//
 $(function(){
-  // Document is ready
   var canvas = document.getElementById("canvas");
   var gl = null;
   try { 
-    if (!gl) {
+    if (!gl)
       gl = canvas.getContext("moz-webgl");
-    }
   } catch (e) {}
   try { 
-    if (!gl) {
+    if (!gl)
       gl = canvas.getContext("webkit-3d");
-    }
   } catch (e) {}
 
   if (!gl) {
@@ -142,11 +144,13 @@ $(function(){
   }
 
   var userData = {};
-  init(gl, userData);
-  draw(gl, userData);
+  if (init(gl, userData)) {
+    draw(gl, userData);
+  }
+
 });
 
-    </script>
+</script>
 </head>
 
 <body>
