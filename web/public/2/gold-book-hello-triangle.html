@@ -121,6 +121,8 @@ function draw(gl, userData) {
   gl.enableVertexAttribArray(0);
 
   gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  gl.flush();
 }
 
 //
