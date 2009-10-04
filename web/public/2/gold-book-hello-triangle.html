@@ -27,30 +27,17 @@
 <script type="text/javascript">
 
 function loadShader(gl, id) {
-    var shader;
-    var shaderType;
     var scriptElem = $("#" + id)
     var type = scriptElem.attr("type");
-    console.log("Jim1: " + id);
-    console.log("Jim2: " + type);
+    var shaderType;
     if (type == "x-shader/x-fragment") {
         shaderType = gl.FRAGMENT_SHADER;
     } else if (type == "x-shader/x-vertex") {
         shaderType = gl.VERTEX_SHADER;
     }
-    console.log("Jim3: " + shaderType);
 
-    // gl.createShader(shaderType);
-    var shader;
-    if (type == "x-shader/x-fragment") {
-        shader = gl.createShader(gl.FRAGMENT_SHADER);
-    } else if (type == "x-shader/x-vertex") {
-        shader = gl.createShader(gl.VERTEX_SHADER);
-    } else {
-        return null;
-    }
+    var shader = gl.createShader(shaderType);
     var str = scriptElem.text();
-    console.log("Jim4: " + str);
     gl.shaderSource(shader, str);
     gl.compileShader(shader);
 
@@ -62,27 +49,29 @@ function loadShader(gl, id) {
     return shader;
 }
 
-function init(gl) {
-  var shaders = {}
+function init(gl, userData) {
+  var vertexShader = loadShader(gl, "shader-vs");
+  var fragmentShader = loadShader(gl, "shader-fs");
 
-  if (!("sp" in shaders)) {
-    shaders.vs = loadShader(gl, "shader-vs");
-    shaders.fs = loadShader(gl, "shader-fs");
-    console.log("Jim6");
+  var programObject = gl.createProgram();
+  gl.attachShader(programObject, vertexShader);
+  gl.attachShader(programObject, fragmentShader);
+  // glBindAttribLocation(programObject, 0, "vPosition");
+  gl.linkProgram(programObject);
 
-    shaders.sp = gl.createProgram();
-    gl.attachShader(shaders.sp, shaders.vs);
-    gl.attachShader(shaders.sp, shaders.fs);
-    gl.linkProgram(shaders.sp);
-
-    if (!gl.getProgrami(shaders.sp, gl.LINK_STATUS)) {
-      alert(gl.getProgramInfoLog(shader));
-    }
-
-    gl.useProgram(shaders.sp);
+  if (!gl.getProgrami(programObject, gl.LINK_STATUS)) {
+    alert(gl.getProgramInfoLog(programObject));
   }
 
-  var sp = shaders.sp;
+  userData.programObject = programObject;
+
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+}
+
+function draw(gl, userData) {
+  gl.useProgram(userData.programObject);
+
+  var sp = userData.programObject;
 
   var va = gl.getAttribLocation(sp, "vPosition");
 
@@ -113,11 +102,6 @@ function init(gl) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
 
-  function draw() {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  }
-
   var buffers = {};
   buffers.position = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
@@ -133,7 +117,8 @@ function init(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
   gl.vertexAttribPointer(va, 3, gl.FLOAT, false, 0, 0);
 
-  draw();
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 
 $(function(){
@@ -156,7 +141,9 @@ $(function(){
     return;
   }
 
-  init(gl);
+  var userData = {};
+  init(gl, userData);
+  draw(gl, userData);
 });
 
     </script>
